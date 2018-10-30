@@ -7,15 +7,15 @@ class Parser:
     def __init__(self):
         self.threads = []
 
-    def parseThreads(self, filenames):
+    def parse_threads(self, filenames):
         for filename in filenames:
             thread = Thread()
-            thread.parseThread(filename)
+            thread.parse_thread(filename)
             self.threads.append(thread)
 
     def export(self, file_type='json', filename=None):
         if file_type == 'json':
-            thread_dict = {"threads": [thread.toDict() for thread in self.threads]}
+            thread_dict = {"threads": [thread.to_dict() for thread in self.threads]}
             result = json.dumps(thread_dict)
         
         # Save to a file if a filename is provided
@@ -37,7 +37,7 @@ class Thread:
         if not messages:
             self.messages = []
 
-    def parseThread(self, filename):
+    def parse_thread(self, filename):
         # Setup tree
         tree = etree.parse(filename)
         root = tree.getroot()
@@ -62,16 +62,16 @@ class Thread:
         # Get messages
         for elem in thread_node.findall(".//div[@class='message']"):
             message = Message()
-            message.parseMessage(elem)
+            message.parse_message(elem)
 
             # Only add messages that contain text
             if message.body:
                 self.messages.append(message)
 
-    def toDict(self):
+    def to_dict(self):
         return {"title": self.title, "participants": self.participants,
                 "in_conversation": self.in_conversation, "messages":
-                [message.toDict() for message in self.messages]}
+                [message.to_dict() for message in self.messages]}
 
  
 class Message:
@@ -81,7 +81,7 @@ class Message:
         self.timestamp = timestamp
         self.time_string = time_string
 
-    def parseMessage(self, message_node):
+    def parse_message(self, message_node):
         self.user = message_node.find(".//span[@class='user']").text
         self.time_string = message_node.find(".//span[@class='meta']").text
 
@@ -91,6 +91,6 @@ class Message:
         # Text is in <p> tag following message, so we grab the "next" node
         self.body = message_node.getnext().text
 
-    def toDict(self):
+    def to_dict(self):
         return {"user": self.user, "body": self.body, "time_string":
                 self.time_string}
