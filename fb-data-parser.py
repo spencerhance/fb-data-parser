@@ -23,7 +23,7 @@ def main():
     print("Parsing messages...")
     message_files = list(glob.glob(args.data_dir + "/messages/*.html"))
     message_parser = messages.Parser()
-    message_parser.parseThreads(message_files)
+    message_parser.parse_threads(message_files)
 
     # Export the data to a file
     filename = "messages." + args.output_type
